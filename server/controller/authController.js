@@ -1,17 +1,17 @@
 const UserModel = require("../model/UserSchema");
 const bcrypt = require("bcryptjs");
-
+const passport = require("passport");
 
 const registerUser = async (req,res) => {
     try {
         const { userName, email, password } = req.body;
-        const userExist = await findOne({email : req.body.email});
+        const userExist = await UserModel.findOne({email : req.body.email});
         if(userExist){
             res.status(400).json({ message : "This email address is already exist"});
         }
         const hashPassword = await bcrypt.hash(password,10);
         const newUser = await UserModel.create({
-            userName, email, hashPassword
+            userName, email, password : hashPassword
         })
         if(newUser){
             res.json({ message : "User Register successfully.",status : true});
@@ -20,8 +20,8 @@ const registerUser = async (req,res) => {
             res.json({ message : "Requested data is not valid, Please try it again", status : false});
         }
     } catch (error) {
-        res.json({ message : "Something went wrong, please try again."});
         console.log(error); 
+        // res.json({ message : "Something went wrong, please try again."});
     }
 }
 

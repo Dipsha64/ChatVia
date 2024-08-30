@@ -3,15 +3,41 @@ import { FaUser } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoHeartSharp } from "react-icons/io5";
+import axios from "axios";
+import { registerUserRoute } from "../utils/APIRoutes";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Signup() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     console.log("ERR",errors);
+    const navigate = useNavigate();
+    const toastOption = {
+        position : "top-right",
+        autoClose : 8000,
+        pauseOnHover : true,
+        theme : "dark",
+        draggable : true
+    }
 
-    const handleSignup = () => {
-
+    const handleSignup = (data) => {
+        console.log("DATAAAA" , data);
+        axios.post(registerUserRoute,data).then((result)=>{
+            console.log("RESULTTTT" , result);
+            if(result.data && result.data.status === true){
+                toast(result.data.message,toastOption);
+                navigate("/login");
+            }
+            else {
+                toast(result.data.message,toastOption);
+            }
+        })
+        .catch((error)=>{
+            console.log(error ,error.response);
+            toast(error.response.data.message,toastOption);
+        })
     }
 
     return ( 
@@ -76,6 +102,7 @@ function Signup() {
                 </div>
             </div>
         </div>
+        <ToastContainer/>
         </>
     );
 }
