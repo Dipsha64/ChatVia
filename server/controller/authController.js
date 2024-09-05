@@ -32,11 +32,11 @@ const loginUser = async (req,res) => {
         if(!userData){
             res.status(400).json({ message : "User does not exist. Please create a user."});
         }
-        bcrypt.compare(req.body.password,userExist.password,(err,data)=>{
+        bcrypt.compare(req.body.password,userData.password,(err,data)=>{
             if(data){
                 let obj = {"id": userData._id , "userName" : userData.userName , "email" : userData.email}
-                let token = generateToken(obj);
-                res.json({message : "login successfully",status : true , data : obj,token:token});
+                // let token = generateToken(obj);
+                res.json({message : "login successfully",status : true , data : obj});
             }
             else{
                 res.json({message : "Incorrect email & password, Please try it again.",status : false});

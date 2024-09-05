@@ -3,17 +3,40 @@ import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { useForm } from "react-hook-form";
 import { IoHeartSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { loginUserRoute } from "../utils/APIRoutes";
-import axios from "axios";
+import { loginAsyncSlice } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     console.log("ERR",errors);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const toastOption = {
+        position : "top-right",
+        autoClose : 8000,
+        pauseOnHover : true,
+        theme : "dark",
+        draggable : true
+    }
 
-    const handleLogin = () => {
-
+    const handleLogin = (data) => {
+        dispatch(loginAsyncSlice(data)).then((res)=>{
+            console.log("LOGIN RESSSS", res);
+            if(res.payload && res.payload.status === true){
+                toast(res.payload.message,toastOption);
+                navigate("/chat");
+            }
+            else{
+                toast(res.payload.message,toastOption);
+            }
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
     }
     const handleGoogleLogin = () => {
         window.open("http://localhost:4009/auth/google/callback","_self");
@@ -31,6 +54,7 @@ function Login() {
                         <h4 className="md:text-xl text-base text-gray-900 font-semibold text-center">Sign Up</h4>
                         <h4 className="pt-4 text-base text-center">Get Your ChatVia Account Now</h4>
                         <div className="bg-white p-10 mt-8">
+                            
                             <div>
                                 <span>Email</span>
                                 <div className="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
@@ -58,6 +82,7 @@ function Login() {
                             <div className="flex justify-center pt-8">
                                 <button className="bg-[#7169ef] text-white py-2 px-4 rounded-md font-semibold text-md">Sign In</button>
                             </div>
+
                             <div className="flex justify-center items-center">
                                 <hr class="w-48 h-1 mx-auto my-4 bg-slate-600 rounded md:my-10"></hr>
                                 <span className="m-2.5">OR</span>
@@ -79,6 +104,7 @@ function Login() {
                 </div>
             </div>
         </div>
+        <ToastContainer/>
         </>
     );
 }
