@@ -7,6 +7,7 @@ import { LuSettings } from "react-icons/lu";
 import profilePic from "../../assets/images/profile.jpg";
 import { RiUserAddLine } from "react-icons/ri";
 import { GoSearch } from "react-icons/go";
+import MessageSection from "./MessageSection";
 
 function ChatDashboard() {
     return ( 
@@ -48,7 +49,21 @@ function ChatDashboard() {
                                 <li className="">
                                     <div className="flex bg-[#e6ebf5] rounded-md">
                                         <div className="flex justify-center items-center p-3">
-                                            <img className="h-10 w-10 rounded-full" src={profilePic} alt="profileImage"/>
+                                            <img className="max-h-10 max-w-10 rounded-full" src={profilePic} alt="profileImage"/>
+                                        </div>
+                                        <div className="lg:w-4/5 md:w-3/5 sm:w-1/5 my-auto">
+                                            <h5 className="text-base font-semibold">Urja Test</h5>
+                                            <p className="text-sm truncate">Hey there! I'm available.</p>
+                                        </div>
+                                        <div className="flex justify-center my-auto lg:whitespace-nowrap lg:p-2">
+                                            05 min
+                                        </div>
+                                    </div>
+                                </li>
+                                <li className="">
+                                    <div className="flex">
+                                        <div className="flex justify-center items-center p-3">
+                                            <img className="max-h-10 max-w-10 rounded-full" src={profilePic} alt="profileImage"/>
                                         </div>
                                         <div className="w-4/5 my-auto">
                                             <h5 className="text-base font-semibold">Urja Test</h5>
@@ -62,7 +77,7 @@ function ChatDashboard() {
                                 <li className="">
                                     <div className="flex">
                                         <div className="flex justify-center items-center p-3">
-                                            <img className="h-10 w-10 rounded-full" src={profilePic} alt="profileImage"/>
+                                            <img className="max-h-10 max-w-10 rounded-full" src={profilePic} alt="profileImage"/>
                                         </div>
                                         <div className="w-4/5 my-auto">
                                             <h5 className="text-base font-semibold">Urja Test</h5>
@@ -76,21 +91,7 @@ function ChatDashboard() {
                                 <li className="">
                                     <div className="flex">
                                         <div className="flex justify-center items-center p-3">
-                                            <img className="h-10 w-10 rounded-full" src={profilePic} alt="profileImage"/>
-                                        </div>
-                                        <div className="w-4/5 my-auto">
-                                            <h5 className="text-base font-semibold">Urja Test</h5>
-                                            <p className="text-sm">Hey there! I'm available.</p>
-                                        </div>
-                                        <div className="flex justify-center my-auto whitespace-nowrap p-2">
-                                            05 min
-                                        </div>
-                                    </div>
-                                </li>
-                                <li className="">
-                                    <div className="flex">
-                                        <div className="flex justify-center items-center p-3">
-                                            <img className="h-10 w-10 rounded-full" src={profilePic} alt="profileImage"/>
+                                            <img className="max-h-10 max-w-10 rounded-full" src={profilePic} alt="profileImage"/>
                                         </div>
                                         <div className="w-4/5 my-auto">
                                             <h5 className="text-base font-semibold">Urja Test</h5>
@@ -106,7 +107,7 @@ function ChatDashboard() {
                     </div>
                 </div>
                 <div className="w-4/5 bg-white">
-                    C
+                    <MessageSection/>
                 </div>
             </div>
         </div></>
