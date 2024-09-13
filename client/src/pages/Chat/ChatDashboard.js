@@ -8,8 +8,17 @@ import profilePic from "../../assets/images/profile.jpg";
 import { RiUserAddLine } from "react-icons/ri";
 import { GoSearch } from "react-icons/go";
 import MessageSection from "./MessageSection";
+import { useState } from "react";
+import AddNewChatUser from "../../components/AddNewChatUser";
 
 function ChatDashboard() {
+    const [showToggle, setShowToggle] = useState(false);
+    const [isOpenUserModel, setIsOpenUserModel ] = useState(false);
+
+    const handleNewUserModel = () => {
+        setIsOpenUserModel(!isOpenUserModel);
+    }
+
     return ( 
         <>
         <div>
@@ -27,8 +36,18 @@ function ChatDashboard() {
                             <li className="w-[38px] h-[56px] rounded-md my-auto text-2xl flex justify-center items-center"><LuSettings /></li>
                         </ul>
                     </div>
-                    <div>
-                        <img className="rounded-full" src={profilePic} alt="profilePic"/>
+                    <div className="relative">
+                        <img className="rounded-full" src={profilePic} alt="profilePic" onClick={() => setShowToggle((val)=> !val)}/>
+                        <div className="absolute bottom-full mb-2 -right-[12px] mt-2 rounded-md w-16" style={{ boxShadow: '4px 4px 4px #0f223a1f' }}>
+                            { showToggle && 
+                                <div>
+                                    <ul>
+                                        <li>Profile</li>
+                                        <li>Log out</li>
+                                    </ul>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
                 <div className="w-2/6">
@@ -36,7 +55,7 @@ function ChatDashboard() {
                         <div className="">
                             <div className="flex justify-between items-center px-4 pt-4">
                                 <div><h4 className="font-semibold text-xl">Chats</h4></div>
-                                <div className="w-[38px] h-[56px] rounded-md my-auto text-2xl flex justify-center items-center"><RiUserAddLine /></div>
+                                <div className="w-[38px] h-[56px] rounded-md my-auto text-2xl flex justify-center items-center" onClick={handleNewUserModel}><RiUserAddLine /></div>
                             </div>
                             <div className="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md mx-2">
                                 <GoSearch/>
@@ -109,6 +128,11 @@ function ChatDashboard() {
                 <div className="w-4/5 bg-white">
                     <MessageSection/>
                 </div>
+                {isOpenUserModel && 
+                    <div>
+                        <AddNewChatUser closeUserModal={handleNewUserModel}/>
+                    </div>
+                }
             </div>
         </div></>
     );

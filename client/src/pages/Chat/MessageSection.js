@@ -68,7 +68,7 @@ function MessageSection() {
                                             src="https://icons.getbootstrap.com/assets/icons/emoji-smile.svg"
                                             onClick={() => setShowPicker((val) => !val)}
                                         />
-                                        <div className="absolute bottom-full mb-2 -left-[328px] right-0 shadow-lg">
+                                        <div className="absolute bottom-full mb-2 -left-[328px] right-0">
                                             {showPicker && (
                                                 <EmojiPicker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
                                             )}
