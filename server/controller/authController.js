@@ -70,7 +70,7 @@ const sendVerificationEmail = async (req,res) => {
         }
         const token = jwt.sign({email},process.env.JWT_SECRET_KEY,{expiresIn: '1h'});
         // SENT VERIFICATION URL INTO MAIL
-        const verificationUrl = `http://localhost:${process.env.PORT}/api/auth/verify-email/${token}`;
+        const verificationUrl = `http://localhost:${process.env.PORT}/api/auth/verifyEmail/${token}`;
         console.log("token.." ,verificationUrl);
         const mailOption = {
             from : process.env.NODEMAILER_EMAIL,
