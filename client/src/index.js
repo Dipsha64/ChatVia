@@ -10,6 +10,7 @@ import { persistor, store } from './store/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import Protected from "./store/Protected";
+import MailVerifiaction from "./components/MailVerification";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
       <Route path='login' element={<Login/>}></Route>
       <Route path='signup' element={<Signup/>}></Route>
       <Route path='chat' element={<Protected><ChatDashboard/></Protected>}></Route>
+      <Route path='verify' element={<MailVerifiaction/>}></Route>
     </Route>
   )
 )

@@ -52,17 +52,17 @@ const loginUser = async (req,res) => {
 
 //Email Sending Config (Nodemailer Setup)
 const transporter  = nodemailer.createTransport({
-    service : "Gmail",
+    service : "gmail",
     auth : {
-        user : process.env.NODEMAILER_EMAIL,
-        pass : process.env.NODEMAILER_PASS
+        user : "dipshaj64@gmail.com",
+        pass : "jsys qqns jxss jzji"
     }
 })
 
 const sendVerificationEmail = async (req,res) => {
     try {
         const { email } = req.body;
-        console.log("REWQQQQQ", req.body.email);
+        console.log("email...", email);
         const error = validationResult(req);
         if(!error.isEmpty()){
             console.log("IS AN ERROR");
@@ -70,98 +70,109 @@ const sendVerificationEmail = async (req,res) => {
         }
         const token = jwt.sign({email},process.env.JWT_SECRET_KEY,{expiresIn: '1h'});
         // SENT VERIFICATION URL INTO MAIL
-        const verificationUrl = `http://localhost:${process.env.PORT}/api/auth/verifyEmail/${token}`;
+        const verificationUrl = `http://localhost:3000/verify?token=${token}`
+        // const verificationUrl = `http://localhost:${process.env.PORT}/api/auth/verifyEmail/${token}`;
         console.log("token.." ,verificationUrl);
+        let mailTemplate = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Email Invitation</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              margin: 0;
+              padding: 0;
+            }
+            .email-container {
+              max-width: 600px;
+              margin: 20px auto;
+              background-color: #fff;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+              text-align: center;
+              padding-bottom: 20px;
+            }
+            .header img {
+              width: 100px;
+            }
+            .content {
+              text-align: center;
+              padding: 20px;
+            }
+            .content h2 {
+              font-size: 24px;
+              color: #333;
+            }
+            .content p {
+              font-size: 16px;
+              color: #555;
+            }
+            .avatar-container {
+              display: flex;
+              justify-content: center;
+              margin: 10px 0;
+            }
+            .avatar {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              margin: 0 5px;
+              object-fit: cover;
+            }
+            .button {
+              text-align: center;
+              margin-top: 20px;
+            }
+            .button a {
+              background-color: #7c3aed;
+              color: #fff;
+              padding: 10px 20px;
+              text-decoration: none;
+              border-radius: 5px;
+            }
+            .footer {
+              padding-top: 20px;
+              text-align: center;
+              color: #888;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="email-container">
+            <div class="header">
+              <img src="https://themes.themesbrand.com/chatvia/vue/v-light/img/logo.e1090ec2.svg" alt="Slack Logo">
+            </div>
+            <div class="content">
+              <h2>Chatvia has invited you to join app</h2>
+              <p>Join the conversation in a workspace of <strong>Chatvia</strong>.</p>
+              <div class="button">
+                <a href="${verificationUrl}" target="_blank">JOIN CHATVIA</a>
+              </div>
+            </div>
+            <div class="footer">
+              <p>What is Chatvia?</p>
+              <p>Chatvia is a messaging app for teams, a place you can collaborate on projects and organize conversations — so you can work together, no matter where you are.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+        `;
         const mailOption = {
             from : process.env.NODEMAILER_EMAIL,
             to : email,
             subject : "Let's verify your email",
-            html : `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Email Verification</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f5f7fa;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    .email-container {
-                        max-width: 600px;
-                        margin: 0 auto;
-                        background-color: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        text-align: center;
-                        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-                    }
-                    .logo {
-                        margin-bottom: 20px;
-                    }
-                    .logo img {
-                        width: 100px;
-                    }
-                    .heading {
-                        font-size: 24px;
-                        color: #333;
-                        margin-bottom: 10px;
-                    }
-                    .subheading {
-                        font-size: 16px;
-                        color: #555;
-                        margin-bottom: 30px;
-                    }
-                    .button {
-                        background-color: #00ad9f;
-                        color: white;
-                        padding: 12px 20px;
-                        text-decoration: none;
-                        border-radius: 5px;
-                        font-size: 16px;
-                        display: inline-block;
-                    }
-                    .button:hover {
-                        background-color: #008f85;
-                    }
-                    .footer {
-                        font-size: 12px;
-                        color: #888;
-                        margin-top: 30px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="email-container">
-                    <div class="heading">
-                        You're nearly there!
-                    </div>
-                    <div class="subheading">
-                        Verify your email address to log in and get started.
-                    </div>
-                    <a href="${verificationUrl}" class="button">Verify Email</a>
-                    <div class="footer">
-                        © 2024 Your Company. All rights reserved. <br>
-                        <a href="https://yourcompany.com/support" style="color: #00ad9f;">Support</a>
-                    </div>
-                </div>
-            </body>
-            </html>
-        `
+            html : mailTemplate
         }
-        transporter.sendMail(mailOption,(error,info)=>{
-            if(error){
-                return res.json({ message: 'Error sending email' });
-            }
-            else {
-                return res.json({ message: 'Verification email sent!' })
-            }
-        })
-
+        let info = await transporter.sendMail(mailOption);
+        res.json({message : "Invititaion mail has been send to your email. Please verify it.",status: true , data :info})
     } catch (error) {
         console.log(error);
     }
@@ -176,6 +187,8 @@ const verifyEmail =  async (req,res) => {
                 return res.json({message : 'valid or expired token'})
             }
             const { email } = decode;
+            console.log("email.." ,email);
+
             res.send(`<h1>Email ${email} has been successfully verified!</h1>`);
         })
 
@@ -184,4 +197,41 @@ const verifyEmail =  async (req,res) => {
     }
 }
 
-module.exports = { registerUser, loginUser, sendVerificationEmail, verifyEmail };
+// Get Logged In user details
+const getUserProfile = async(req,res) => {
+    try {
+        const user = await UserModel.findById(req.params.id);
+        if(!user){
+            res.json({message : "User Not Found", status : false})
+        }
+        res.json({message : "User Profile get successfully.", status: true, data : user});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// Get All contact of User
+const getUserContacts = async (req,res) => {
+    try {
+        //  populate is Store all the details of User from that Schema object ID
+        const user = await UserModel.findById(req.params.id).populate("contacts");
+        if(!user){
+            res.json({message : "User not found", status : false});
+        }
+        res.json({message : "All the contact is get successfully.", status : true, data : user.contacts})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const updateUserProfile = async (req,res) => {
+    try {
+        const userId = req.params.id;
+        const userData = await UserModel.findByIdAndUpdate(id,{$set : req.body},{new : true});
+        res.json({message : "User Updated successfully", status : true, data: updateUser});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = { registerUser, loginUser, sendVerificationEmail, verifyEmail, getUserProfile, getUserContacts, updateUserProfile };

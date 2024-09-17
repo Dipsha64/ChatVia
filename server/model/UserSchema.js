@@ -32,7 +32,15 @@ const userSchema = mongoose.Schema({
     },
     pincode : {
         type : String
-    }
+    },
+    lastSeen : {
+        type : Date,
+        default : Date.now
+    },
+    contacts: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User' 
+    }],
 },{
     timestamps : true 
 });

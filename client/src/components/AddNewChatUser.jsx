@@ -32,7 +32,7 @@ function AddNewChatUser({closeUserModal}) {
                     <form noValidate onSubmit={handleSubmit(handleNewUser)}>
                         <div>
                             <span>Email</span>
-                            <div class="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
+                            <div className="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
                                 <MdEmail/>
                                 <input type="email" name="email" placeholder="Enter Email" className="flex-1 pl-2 border-none outline-none text-base"
                                     {...register("email",{required : "The email is required.",pattern : {value : /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,message : "Email not valid"}})}/>

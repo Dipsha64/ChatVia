@@ -71,6 +71,8 @@ app.get("/auth/google/callback",passport.authenticate("google",{
 }))
 
 app.use("/api/auth",require("./routes/authRoutes"));
+app.use("/api/chat",require("./routes/chatRoutes"));
+app.use("/api/message",require("./routes/messageRoutes"));
 
 const port = process.env.PORT;
 app.listen(port,()=>{

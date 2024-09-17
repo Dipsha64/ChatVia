@@ -54,7 +54,7 @@ function Signup() {
                         <div className="bg-white p-10 mt-8">
                             <div>
                                 <span>User Name</span>
-                                <div class="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
+                                <div className="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
                                     <FaUser/>
                                     <input type="text" name="userName" placeholder="Enter Username" className="flex-1 pl-2 border-none outline-none text-base"
                                         {...register("userName",{required : "The user name is required."})}/>

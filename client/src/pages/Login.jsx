@@ -84,9 +84,9 @@ function Login() {
                             </div>
 
                             <div className="flex justify-center items-center">
-                                <hr class="w-48 h-1 mx-auto my-4 bg-slate-600 rounded md:my-10"></hr>
+                                <hr className="w-48 h-1 mx-auto my-4 bg-slate-600 rounded md:my-10"></hr>
                                 <span className="m-2.5">OR</span>
-                                <hr class="w-48 h-1 mx-auto my-4 bg-slate-600 rounded md:my-10"></hr>
+                                <hr className="w-48 h-1 mx-auto my-4 bg-slate-600 rounded md:my-10"></hr>
                             </div>
                             <div className="flex justify-center border border-slate-800 rounded-md cursor-pointer" onClick={handleGoogleLogin}>
                                 <FcGoogle className="my-auto"/>
