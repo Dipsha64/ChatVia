@@ -3,17 +3,25 @@ import { MdEmail } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import { sendEmailRoute } from "../utils/APIRoutes";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { isAuthenticated } from "../features/auth/authSlice";
+import { useState } from "react";
 
 function AddNewChatUser({closeUserModal}) {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const loginUser = useSelector(isAuthenticated);
+    const [ errorMessage, setErrorMessage ] = useState("");
 
-    const handleNewUser = (data) => {
-        console.log("EMAIL DATAA", data);
-        axios.post(sendEmailRoute,data).then((res)=>{
+    const handleNewUser = async (data) => {
+        axios.post(await sendEmailRoute,{email:data.email,id:loginUser.id}).then((res)=>{
             console.log("EMAIL RESSSS", res);
         })
         .catch((error)=>{
             console.log(error);
+            setErrorMessage(error.response.data.message);
+            setTimeout(() => {
+                setErrorMessage("");
+            }, 5000);
         })
     }
 
@@ -38,8 +46,11 @@ function AddNewChatUser({closeUserModal}) {
                                     {...register("email",{required : "The email is required.",pattern : {value : /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/gi,message : "Email not valid"}})}/>
                             </div>
                             <span className="text-red-500">
-                                    {errors.email && <span>{errors.email.message}</span>}
-                                </span>
+                                {errors.email && <span>{errors.email.message}</span>}
+                            </span>
+                            <span className="text-red-500">
+                                { errorMessage && <span>{errorMessage}</span>}
+                            </span>
                             <div className="flex flex-row-reverse gap-6 mt-9">
                                 <button className="p-3 bg-violet-600 text-white rounded-md">Save</button>
                                 <button onClick={closeUserModal}>Close</button>

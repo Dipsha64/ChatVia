@@ -54,7 +54,6 @@ function Login() {
                         <h4 className="md:text-xl text-base text-gray-900 font-semibold text-center">Sign Up</h4>
                         <h4 className="pt-4 text-base text-center">Get Your ChatVia Account Now</h4>
                         <div className="bg-white p-10 mt-8">
-                            
                             <div>
                                 <span>Email</span>
                                 <div className="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
