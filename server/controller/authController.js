@@ -64,10 +64,8 @@ const sendVerificationEmail = async (req,res) => {
     try {
         const { email } = req.body;
         const { userId } = req.body.id;
-        console.log("req.body...", req.body);
         const error = validationResult(req);
         if(!error.isEmpty()){
-            console.log("IS AN ERROR");
             res.json({error : error.array()});
         }
         const userData = await UserModel.findOne({email : req.body.email});
@@ -79,7 +77,6 @@ const sendVerificationEmail = async (req,res) => {
             // SENT VERIFICATION URL INTO MAIL
             const verificationUrl = `http://localhost:3000/verify?token=${token}`
             // const verificationUrl = `http://localhost:${process.env.PORT}/api/auth/verifyEmail/${token}`;
-            console.log("token.." ,verificationUrl);
             let mailTemplate = `
             <!DOCTYPE html>
             <html lang="en">
@@ -189,14 +186,14 @@ const sendVerificationEmail = async (req,res) => {
 // After verify the email, Create that New user & add that user as a chat user
 const verifyEmailCreateUser =  async (req,res) => {
     try {
-        console.log("REQQ DATAA", req.body);
         const hashPassword = await bcrypt.hash(req.body.data.password,10);
+        console.log("req.body.data.",req.body);
         const newUser = await UserModel.create({
-            email : req.body.data.email, password : hashPassword, contacts : req.body.userId
+            email : req.body.data.email, password : hashPassword, contacts : req.body.userId, userName : req.body.data.userName
         })
-        console.log("newUsernewUser...",newUser);
         const updateContact = await UserModel.findByIdAndUpdate(req.body.userId, { $push : {contacts : newUser._id}});
-        console.log("updateConatact.." ,updateContact);
+        const userObj = [req.body.userId,newUser._id];
+        const chatUser = await ChatModel.create({participants : userObj});
         res.json({message : "Chat user create successfully.",status :true});
 
         // const { token } = req.params;

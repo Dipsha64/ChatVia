@@ -25,7 +25,6 @@ function Login() {
 
     const handleLogin = (data) => {
         dispatch(loginAsyncSlice(data)).then((res)=>{
-            console.log("LOGIN RESSSS", res);
             if(res.payload && res.payload.status === true){
                 toast(res.payload.message,toastOption);
                 navigate("/chat");

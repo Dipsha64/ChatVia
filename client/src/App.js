@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 function App() {
   const loginUser = useSelector(isAuthenticated);
-  console.log("LOGIN USERRR" , loginUser);
   return (
     <div>
       {/* <Header/> */}

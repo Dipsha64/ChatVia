@@ -6,15 +6,27 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { isAuthenticated } from "../features/auth/authSlice";
 import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function AddNewChatUser({closeUserModal}) {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const loginUser = useSelector(isAuthenticated);
     const [ errorMessage, setErrorMessage ] = useState("");
+    const toastOption = {
+        position : "top-right",
+        autoClose : 8000,
+        pauseOnHover : true,
+        theme : "dark",
+        draggable : true
+    }
 
     const handleNewUser = async (data) => {
         axios.post(await sendEmailRoute,{email:data.email,id:loginUser.id}).then((res)=>{
-            console.log("EMAIL RESSSS", res);
+            if(res.data && res.data.status == true){
+                toast(res.data.message,toastOption);
+                closeUserModal();
+            }
         })
         .catch((error)=>{
             console.log(error);
@@ -60,6 +72,7 @@ function AddNewChatUser({closeUserModal}) {
                 </div>
             </div>
         </div>
+        <ToastContainer/>
         </>
     );
 }

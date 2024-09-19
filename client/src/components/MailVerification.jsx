@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
 import { useForm } from "react-hook-form";
 import { MdEmail } from "react-icons/md";
+import { FaUser } from "react-icons/fa6";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { verifyEmailUserRoute } from '../utils/APIRoutes';
 import axios from 'axios';
@@ -34,9 +35,7 @@ function MailVerification() {
     const [ userAdded, setUserAdded ] = useState(false);
 
     const handleCreateNewUser = async (data) => {
-        console.log("DATAAA",data);
         axios.post(verifyEmailUserRoute,{data:data, userId:decodedToken.userId}).then((res)=>{
-            console.log("ERSSSS", res);
             if(res.data && res.data.status == true){
                 setUserAdded(true);
             }
@@ -53,7 +52,7 @@ function MailVerification() {
                 <div className="w-36">
                     <img src={logoImage} alt="image"/>
                 </div>
-                { userAdded ?
+                { !userAdded ?
                     <div className="pt-16 w-full">
                         <form noValidate onSubmit={handleSubmit(handleCreateNewUser)}>
                         <h4 className="md:text-3xl text-3xl text-gray-900 font-bold text-center">Join Team on Chatvia</h4>
@@ -69,6 +68,17 @@ function MailVerification() {
                                     </div>
                                     <span className="text-red-500">
                                         {errors.email && <span>{errors.email.message}</span>}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span>User Name</span>
+                                    <div className="flex items-center border border-gray-300 rounded-md p-2 mt-2 mb-4 max-w-md">
+                                        <FaUser/>
+                                        <input type="text" name="userName" placeholder="Enter Username" className="flex-1 pl-2 border-none outline-none text-base"
+                                            {...register("userName",{required : "The user name is required."})}/>
+                                    </div>
+                                    <span className="text-red-500">
+                                        {errors.userName && <span>{errors.userName.message}</span>}
                                     </span>
                                 </div>
                                 <div>
@@ -107,7 +117,7 @@ function MailVerification() {
                         </div>
                         <div className="flex justify-center pt-10">
                             <p>© 2024 Chatvia. Created with </p>
-                                <IoHeartSharp className="my-auto mx-1"/> <p>  by Dipsha Mali</p>
+                                <IoHeartSharp className="my-auto mx-1"/> <p> by Dipsha Mali</p>
                         </div>
                     </div>
                 }

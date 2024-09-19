@@ -3,9 +3,14 @@ const ChatSchema = require("../model/ChatSchema");
 
 const sendMessage = async (req,res) => {
     try {
-        const { sender, chat, messageContent, media, messageType } = req.body;
-        const newMessage = await MessageSchema.create({sender, chat, messageContent, media, messageType});
-        await ChatSchema.findByIdAndUpdate(chat,{ lastMessage: newMessage._id });
+        const { loginUser, selectedChatUser, msgInfo } = req.body;
+        const newMessage = await MessageSchema.create({sender : loginUser.id,receiver : selectedChatUser._id, messageContent : msgInfo});
+        const isChatExist = await ChatSchema.findOne({
+            participants : {$all: [loginUser.id, selectedChatUser._id]}
+        })
+        if(isChatExist){
+            await ChatSchema.findByIdAndUpdate(isChatExist._id,{ lastMessage: newMessage._id });
+        }
         res.json({message : "Message send successfully", status : true,data : newMessage});
     } catch (error) {
         console.log(error);

@@ -23,9 +23,7 @@ function Signup() {
     }
 
     const handleSignup = (data) => {
-        console.log("DATAAAA" , data);
         axios.post(registerUserRoute,data).then((result)=>{
-            console.log("RESULTTTT" , result);
             if(result.data && result.data.status === true){
                 toast(result.data.message,toastOption);
                 navigate("/login");
