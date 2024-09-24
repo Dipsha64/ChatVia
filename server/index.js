@@ -1,5 +1,6 @@
 const express = require("express");
-const app = express();
+// const app = express();
+const { app, server } = require("./socket/index");
 app.use(express.json());
 const cors = require("cors");
 const dotenv = require("dotenv").config();
@@ -8,6 +9,7 @@ const session = require("express-session");
 const passport = require("passport");
 const OAuth2Strategy = require("passport-google-oauth2").Strategy;
 const userModel = require("./model/UserSchema");
+
 
 // Session is used to create Unique Encrypted ID for Google Login
 app.use(session({
@@ -57,10 +59,12 @@ passport.deserializeUser(async (id,done)=>{
     done(null,user);
 })
 
-const corsOption = {
-    origin : true
-}
+const corsOption={
+    origin:'http://localhost:3000',
+    credentials:true
+};
 app.use(cors(corsOption));
+
 connectDb();
 
 // Initial Google Auth Login
@@ -75,6 +79,6 @@ app.use("/api/chat",require("./routes/chatRoutes"));
 app.use("/api/message",require("./routes/messageRoutes"));
 
 const port = process.env.PORT;
-app.listen(port,()=>{
+server.listen(port,()=>{
     console.log("Server is running...", port);
 })

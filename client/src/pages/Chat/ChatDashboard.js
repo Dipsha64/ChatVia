@@ -11,11 +11,13 @@ import MessageSection from "./MessageSection";
 import { useEffect, useState } from "react";
 import AddNewChatUser from "../../components/AddNewChatUser";
 import axios from "axios";
-import { getUserContactsRoute } from "../../utils/APIRoutes";
-import { useSelector } from "react-redux";
-import { isAuthenticated } from "../../features/auth/authSlice";
-import noProfile from "../../assets/images/noProfile.png";
+import { getUserContactsRoute, getChatMessagesRoute } from "../../utils/APIRoutes";
+import { useSelector, useDispatch } from "react-redux";
+import { isAuthenticated, setOnlineUsers, onlineUserList } from "../../features/auth/authSlice";
+import { setSocket } from "../../features/socket/socketSlice";
+import { PiUserCircle } from "react-icons/pi";
 import chatBackground from "../../assets/images/chatBackground.png";
+import io from "socket.io-client";
 
 function ChatDashboard() {
     const [showToggle, setShowToggle] = useState(false);
@@ -23,10 +25,32 @@ function ChatDashboard() {
     const loginUser = useSelector(isAuthenticated);
     const [ chatUsers, setChatUsers ] = useState([]);
     const [ selectedUserChat, setSelectedUserChat ] = useState({});
+    const onlineUserArr = useSelector(onlineUserList);
+    const dispatch = useDispatch();
 
     const handleNewUserModel = () => {
         setIsOpenUserModel(!isOpenUserModel);
-    }   
+    }  
+    
+    /***socket connection */
+    useEffect(()=>{
+        const socketConnection = io(process.env.REACT_APP_BACKEND_URL,{
+            auth : {
+                userId : loginUser.id
+            }
+        })
+        dispatch(setSocket(socketConnection));
+
+        socketConnection?.on("getOnlineUsers",(onlineUsers)=>{
+            console.log("onlineUsers..",onlineUsers);
+            dispatch(setOnlineUsers(onlineUsers));
+        })
+
+        return ()=>{
+            socketConnection.disconnect();
+        }
+    },[loginUser])
+
     // Get User listing in chat User
     const getUserAllChat = async () => {
         axios.get(getUserContactsRoute(loginUser.id)).then((result)=>{
@@ -39,11 +63,44 @@ function ChatDashboard() {
             console.log(error);
         })
     }
+    // Display First Two letter of name if profile photo is not exist
+    const InitialImageName = ({name}) => {
+        const nameParts = name.split(" ");
+        // Get the first letter of the first and last names
+        const initials = nameParts.length >= 2 
+            ? nameParts[0][0] + nameParts[nameParts.length - 1][0] 
+            : nameParts[0][0] + nameParts[0][1]; // If there's only one name part, return its first letter
+
+        return <div>{initials.toUpperCase()}</div>;
+    }
+    // Create random background
+    const randomBackgroung = [
+        'bg-teal-200',
+        'bg-slate-200',
+        'bg-orange-200',
+        'bg-blue-200',
+        'bg-yellow-200',
+        'bg-green-200',
+        'bg-indigo-200',
+        'bg-emerald-200',
+        'bg-rose-200',
+        'bg-cyan-200',
+        'bg-fuchsia-200',
+        'bg-pink-200',
+    ];
+
+    const randomNumber = Math.floor(Math.random() * 11);
 
     // Get Selected user's chat messages
     const getUserChatMessage = (item) => {
         console.log("ITEmm", item);
         setSelectedUserChat(item);
+        // axios.post(getChatMessagesRoute(loginUser.id),item._id).then((res)=>{
+        //     console.log("resssss",res);
+        // })
+        // .catch((error)=>{
+        //     console.log(error);
+        // })
     }
 
     useEffect(()=>{
@@ -95,13 +152,20 @@ function ChatDashboard() {
                         <div className="px-4 pt-4">
                             <h5 className="font-medium text-base">Recent</h5>
                             <ul>
-                                { chatUsers.map((item,id)=>{
-                                    return <li className="" key={id} onClick={() => getUserChatMessage(item)}>
-                                        <div className={`flex ${selectedUserChat._id === item._id  ? 'bg-[#e6ebf5] rounded-md' : ''}`}>
-                                            <div className="flex justify-center items-center p-3">
-                                                <img className="max-h-10 max-w-10 rounded-full" src={noProfile} alt="profileImage"/>
+                                { chatUsers.map((item,index)=>{
+                                    return <li className="" key={index} onClick={() => getUserChatMessage(item)}>
+                                        <div className={`flex my-3 ${selectedUserChat._id === item._id  ? 'bg-[#e6ebf5] rounded-md' : ''}`}>
+                                            <div className={`flex justify-center items-center p-3 font-bold rounded-full shadow relative ${randomBackgroung[index % randomBackgroung.length]}`}>
+                                                { 
+                                                    item.profilePhoto ? (<img className="max-h-10 max-w-10 rounded-full" src={item.profilePhoto} alt="profileImage"/> )
+                                                    : 
+                                                    (item.userName ? <div className="overflow-hidden rounded-full "><InitialImageName name={item.userName}/></div> : <PiUserCircle/>)
+                                                }
+                                                { 
+                                                    ( onlineUserArr.includes(item._id) && <div className='bg-green-600 p-1 absolute bottom-2 right-0 z-10 rounded-full'></div> )
+                                                }
                                             </div>
-                                            <div className="lg:w-4/5 md:w-3/5 sm:w-1/5 my-auto">
+                                            <div className="lg:w-4/5 md:w-3/5 sm:w-1/5 my-auto ml-3">
                                                 <h5 className="text-base font-semibold">{item.userName}</h5>
                                                 <p className="text-sm truncate">Hey there! I'm available.</p>
                                             </div>
@@ -137,7 +201,7 @@ function ChatDashboard() {
                                 </div>
                                 </div>
                             </div>
-                            <h1 className="text-3xl text-white font-semibold mb-4">Download ChatVia for Mac</h1>
+                            <h1 className="text-3xl text-white font-semibold mb-4">Send Messages With Your Friends</h1>
                             <p className="text-gray-300 mb-6">
                                 Make calls and get a faster experience when you download the Mac app.
                             </p>

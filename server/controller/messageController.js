@@ -21,7 +21,9 @@ const sendMessage = async (req,res) => {
 // Get all messages for a chat
 const getChatMessages = async (req,res) => {
     try {
-        const messages = await MessageSchema.find({chat : req.params.chatId}).populate("sender");
+        // const messages = await MessageSchema.find({chat : req.params.chatId}).populate("sender");
+        console.log("REQ PARAAAA", req.params, req.body);
+        // const message = await MessageSchema.find({sender : })
         res.json({message : "Messages get successfully.",status : true, data : messages});
     } catch (error) {
         console.log(error);

@@ -38,9 +38,9 @@ const loginUser = async (req,res) => {
         }
         bcrypt.compare(req.body.password,userData.password,(err,data)=>{
             if(data){
-                let obj = {"id": userData._id , "userName" : userData.userName , "email" : userData.email}
-                // let token = generateToken(obj);
-                res.json({message : "login successfully",status : true , data : obj});
+                let obj = {"id": userData._id , "userName" : userData.userName , "email" : userData.email};
+                const token = jwt.sign({email:userData.email,userId:userData._id},process.env.JWT_SECRET_KEY,{expiresIn: '1d'});
+                res.json({message : "login successfully",status : true , data : obj,token : token});
             }
             else{
                 res.json({message : "Incorrect email & password, Please try it again.",status : false});
@@ -73,7 +73,7 @@ const sendVerificationEmail = async (req,res) => {
             res.json({ message : `${req.body.email} is already exist.`,status:false});
         }
         else{
-            const token = jwt.sign({email:req.body.email,userId:req.body.id},process.env.JWT_SECRET_KEY,{expiresIn: '1h'});
+            const token = jwt.sign({email:req.body.email,userId:req.body.id},process.env.JWT_SECRET_KEY,{expiresIn: '1d'});
             // SENT VERIFICATION URL INTO MAIL
             const verificationUrl = `http://localhost:3000/verify?token=${token}`
             // const verificationUrl = `http://localhost:${process.env.PORT}/api/auth/verifyEmail/${token}`;

@@ -13,7 +13,7 @@ const createChat = async (req,res) => {
 // Get All Chats of Logged In User
 const getUserChats = async (req,res) => {
     try {
-        const chatData = await ChatModel.find({participants : req.params.userId}).populate("participants").populate("lastMessage");
+        const chatData = await ChatModel.find({participants : {$in : [req.params.userId]}}).populate("participants").populate("lastMessage");
         res.json({message : "All chat get successfully", data : chatData, status: true});
     } catch (error) {
         console.log(error);
