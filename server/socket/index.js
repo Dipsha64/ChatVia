@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const { Server } = require("socket.io");
 const http = require("http");
+const messageController = require("../controller/messageController");
 
 /***socket connection */
 const server = http.createServer(app);
@@ -30,15 +31,28 @@ const userSocketMap = {}; // {userId->socketId}
 
 io.on('connection',async(socket)=>{
     const userId = socket.handshake.auth.userId;
-    console.log("userId", userId);
 
     if(userId !== undefined){
         userSocketMap[userId] = socket.id;
     }
     io.emit("getOnlineUsers",Object.keys(userSocketMap));
 
+    //get previous message
+    socket.on("message-page",async(data)=>{
+        // console.log("USER IDDDD",userId);
+        const getConversation = await messageController.getChatMessages(data);
+        socket.emit("allMessages",getConversation || []);
+
+    })
+
+    //new message
+    socket.on("newMessage",async (data) => {
+        console.log("NEW MSG",data);
+        consy
+    })
+    
+
     socket.on("disconnect",()=>{
-        console.log("disconnect", socket.id);
         delete userSocketMap[userId];
         io.emit("getOnlineUsers",Object.keys(userSocketMap));
     })

@@ -16,4 +16,6 @@ const socketSlice = createSlice({
 
 export const {setSocket} = socketSlice.actions;
 
+export const isSocketConnection = (state) => state.socket.socket;
+
 export default socketSlice.reducer;

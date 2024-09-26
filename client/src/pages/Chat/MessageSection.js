@@ -2,7 +2,7 @@ import profilePic from "../../assets/images/profile.jpg";
 import { FiUser } from "react-icons/fi";
 import { RiSearchLine } from "react-icons/ri";
 import EmojiPicker from 'emoji-picker-react';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiAttachment2 } from "react-icons/ri";
 import { IoSend } from "react-icons/io5";
 import ChatBox from "./ChatBox";
@@ -11,29 +11,32 @@ import { isAuthenticated } from "../../features/auth/authSlice";
 import SendAttchmentFile from "../../components/SendAttchmentFiles";
 import { sendMessageRoute } from "../../utils/APIRoutes";
 import axios from "axios";
+import { isSocketConnection } from "../../features/socket/socketSlice";
 
 function MessageSection({selectedUserChat}) {
     const [message, setMessage] = useState("");
     const [showPicker, setShowPicker] = useState(false);
     const loginUser = useSelector(isAuthenticated);
+    const socketConnection = useSelector(isSocketConnection);
     const [selectedFile, setSelectedFile] = useState([]);
     const [ sendMediaMessage, setSendMediaMessage ] = useState(false);
+    const [ allMessage, setAllMessage ] = useState([]);
 
     const onEmojiClick = (emojiObject) => {
         setMessage(prevInput => prevInput + emojiObject.emoji);
         // setShowPicker(false);
     };
-    const [chatMessages, setChatMessages] = useState([
-        { id: 1, text: 'Hello! How are you?', isSender: false },
-        { id: 2, text: 'I am good, thanks! How about you?', isSender: true },
-        { id: 3, text: 'Doing great!', isSender: false },
-    ]);
 
     const saveNewMessage = async () => {
         const msgObj = { msgInfo : message, loginUser : loginUser, selectedChatUser : selectedUserChat};
-        console.log("MSSS", msgObj);
         axios.post(sendMessageRoute,msgObj).then((res)=>{
             console.log("RESSS",res);
+            socketConnection.on("allMessages",(data)=>{
+                console.log("data.." ,data);
+                setAllMessage(oldMessages => [data, ...oldMessages])
+                // setAllMessage(data);
+                setMessage("");
+            })
         })
         .catch((error)=>{
             console.log(error);
@@ -43,6 +46,17 @@ function MessageSection({selectedUserChat}) {
     const handleIconClick = () => {
         document.getElementById('fileInput').click();
     };
+
+    useEffect(()=>{
+        if(socketConnection){
+            socketConnection.emit('message-page',{loginUser : loginUser.id, user : selectedUserChat._id});
+        }
+
+        socketConnection.on("allMessages",(data)=>{
+            console.log("data.." ,data);
+            setAllMessage(data);
+        })
+    },[socketConnection,selectedUserChat?._id])
 
     const handleFileChange = (e) => {
         console.log("EVEEEE",e.target.files);
@@ -56,16 +70,20 @@ function MessageSection({selectedUserChat}) {
             fileType: file.type,
         }));
         setSelectedFile(updatedFiles);
-        // if (file) {
-        //     setSelectedFile(file);
-        //     // setIconItem(prevProducts => [...prevProducts, ...res.data.data]);
-        //     setSendMediaMessage(true);
-        //     // const fileUrl = URL.createObjectURL(file);
-        // }
     }
     
     const handleMediaModel = () => {
         setSendMediaMessage(false);
+    }
+
+    const handleSendMessage = (e) => {
+        e.preventDefault();
+        if(message){
+            const msgObj = { msgInfo : message, loginUser : loginUser, selectedChatUser : selectedUserChat};
+            if(socketConnection){
+                socketConnection.emit("newMessage",msgObj);
+            }
+        }
     }
 
     return ( 
@@ -92,10 +110,10 @@ function MessageSection({selectedUserChat}) {
                             </div>
                         </div>
                     </div>
-                    <div className="h-4/5">
+                    <div className="h-[calc(100vh-128px)] overflow-y-scroll scrollbar overflow-x-hidden">
                         <div className="">
-                            {chatMessages.map((msg) => (
-                                <ChatBox key={msg.id} message={msg.text} isSender={msg.isSender} />
+                            {allMessage.map((msg) => (
+                                <ChatBox key={msg._id} messageObj={msg} isSender={loginUser.id} />
                             ))}
                         </div>
                     </div>
@@ -141,7 +159,7 @@ function MessageSection({selectedUserChat}) {
                                         <input type="file" style={{ display: 'none' }} multiple id="fileInput" onChange={(e) => handleFileChange(e)} className="block mb-2"/>
                                     </div>
                                     <div>
-                                        <button onClick={(e) => saveNewMessage(e)}><IoSend size={25}/></button>
+                                        <button onClick={(e) => handleSendMessage(e)}><IoSend size={25}/></button>
                                     </div>
                                 </div>
                             </div>

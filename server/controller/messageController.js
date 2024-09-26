@@ -1,12 +1,12 @@
 const MessageSchema = require("../model/MessageSchema");
 const ChatSchema = require("../model/ChatSchema");
 
-const sendMessage = async (req,res) => {
+const sendMessage = async (msgData) => {
     try {
-        const { loginUser, selectedChatUser, msgInfo } = req.body;
-        const newMessage = await MessageSchema.create({sender : loginUser.id,receiver : selectedChatUser._id, messageContent : msgInfo});
+        // const { loginUser, selectedChatUser, msgInfo } = req.body;
+        const newMessage = await MessageSchema.create({sender : msgData.loginUser.id,receiver : msgData.selectedChatUser._id, messageContent : msgData.msgInfo});
         const isChatExist = await ChatSchema.findOne({
-            participants : {$all: [loginUser.id, selectedChatUser._id]}
+            participants : {$all: [msgData.loginUser.id, msgData.selectedChatUser._id]}
         })
         if(isChatExist){
             await ChatSchema.findByIdAndUpdate(isChatExist._id,{ lastMessage: newMessage._id });
@@ -19,12 +19,15 @@ const sendMessage = async (req,res) => {
 }
 
 // Get all messages for a chat
-const getChatMessages = async (req,res) => {
+const getChatMessages = async (userData) => {
     try {
-        // const messages = await MessageSchema.find({chat : req.params.chatId}).populate("sender");
-        console.log("REQ PARAAAA", req.params, req.body);
-        // const message = await MessageSchema.find({sender : })
-        res.json({message : "Messages get successfully.",status : true, data : messages});
+        const getMessageConversation = await MessageSchema.find({
+            "$or" : [
+                { sender : userData.loginUser, receiver : userData.user},
+                { sender : userData.user, receiver : userData.loginUser},
+            ]
+        }).sort({ updatedAt : -1 });
+        return getMessageConversation;
     } catch (error) {
         console.log(error);
         res.json({ error: 'Error fetching messages' });

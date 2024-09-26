@@ -6,7 +6,7 @@ const chatSchema = mongoose.Schema({
         ref : "User",
         required : true
     }],
-    lastMessage : {
+    messages : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "Message",
     },

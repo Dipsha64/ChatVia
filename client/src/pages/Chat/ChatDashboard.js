@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { isAuthenticated, setOnlineUsers, onlineUserList } from "../../features/auth/authSlice";
 import { setSocket } from "../../features/socket/socketSlice";
 import { PiUserCircle } from "react-icons/pi";
-import chatBackground from "../../assets/images/chatBackground.png";
+import chatBackground from "../../assets/images/chatBackground.jpeg";
 import io from "socket.io-client";
 
 function ChatDashboard() {
@@ -88,21 +88,11 @@ function ChatDashboard() {
         'bg-fuchsia-200',
         'bg-pink-200',
     ];
-
-    const randomNumber = Math.floor(Math.random() * 11);
-
     // Get Selected user's chat messages
     const getUserChatMessage = (item) => {
         console.log("ITEmm", item);
         setSelectedUserChat(item);
-        // axios.post(getChatMessagesRoute(loginUser.id),item._id).then((res)=>{
-        //     console.log("resssss",res);
-        // })
-        // .catch((error)=>{
-        //     console.log(error);
-        // })
     }
-
     useEffect(()=>{
         getUserAllChat();
     },[])
@@ -183,7 +173,7 @@ function ChatDashboard() {
                     {selectedUserChat && Object.keys(selectedUserChat).length > 0 ? 
                         <MessageSection selectedUserChat={selectedUserChat} />
                     : 
-                    <div className="flex items-center justify-center min-h-screen bg-cover bg-center" style={{ backgroundImage: `url(${chatBackground})`}}>
+                    <div className="flex items-center justify-center min-h-screen bg-cover bg-no-repeat bg-center" style={{ backgroundImage: `url(${chatBackground})`}}>
                         <div className="text-center">
                             <div className="flex justify-center mb-6">
                                 <div className="relative">
